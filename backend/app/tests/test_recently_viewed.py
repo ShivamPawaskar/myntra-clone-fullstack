@@ -6,6 +6,13 @@ from app.core.security import hash_password
 from app.services import recently_viewed_service
 
 
+def _naive(dt):
+    """Drop tzinfo for comparison. The viewed_at column is timezone-aware, so
+    Postgres returns aware datetimes while SQLite returns naive ones — compare
+    the wall-clock instant either way."""
+    return dt.replace(tzinfo=None) if dt and dt.tzinfo else dt
+
+
 async def _make_user_and_products(db, n=25):
     cat = Category(name="Test")
     db.add(cat)
@@ -72,7 +79,7 @@ async def test_merge_local_history_newest_wins(db_session):
 
     items = await recently_viewed_service.get_recent(db, user.id)
     item0 = next(i for i in items if i.product_id == products[0].id)
-    assert item0.viewed_at == newer_time
+    assert _naive(item0.viewed_at) == newer_time
     assert len(items) == 2  # no duplicate row created for products[0]
 
 
@@ -89,4 +96,4 @@ async def test_merge_local_history_does_not_overwrite_with_older_timestamp(db_se
     ])
 
     items = await recently_viewed_service.get_recent(db, user.id)
-    assert items[0].viewed_at == newer_time  # unchanged, server's view was newer
+    assert _naive(items[0].viewed_at) == newer_time  # unchanged, server's view was newer

@@ -93,11 +93,16 @@ async def test_send_notification_returns_none_when_rate_limited(db_session, monk
 @pytest.mark.asyncio
 async def test_send_scheduled_notification_creates_pending_row(db_session, monkeypatch):
     from datetime import timedelta
-    from app.models.user import utcnow
+    from app.models.user import utcnow, User
+    from app.core.security import hash_password
+    # A real user must exist — notifications.user_id has a FK (enforced on Postgres).
+    user = User(email="sched@test.com", name="S", hashed_password=hash_password("x"))
+    db_session.add(user)
+    await db_session.commit()
     monkeypatch.setattr(notification_service, "rate_limit_ok", lambda uid: True)
     future = utcnow() + timedelta(hours=2)
     notif = await notification_service.send_notification(
-        db_session, user_id=1, notif_type="cart_abandonment", title="t", body="b",
+        db_session, user_id=user.id, notif_type="cart_abandonment", title="t", body="b",
         scheduled_at=future,
     )
     assert notif is not None

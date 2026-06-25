@@ -33,9 +33,20 @@ async def client(db_session):
     app.dependency_overrides.clear()
 
 
+@pytest_asyncio.fixture
+async def buyer_id(db_session):
+    """A real user — transactions.user_id has a FK (enforced on Postgres)."""
+    from app.models.user import User
+    from app.core.security import hash_password
+    user = User(email="webhook@test.com", name="W", hashed_password=hash_password("x"))
+    db_session.add(user)
+    await db_session.commit()
+    return user.id
+
+
 @pytest.mark.asyncio
-async def test_webhook_valid_payload_is_processed(client):
-    r = await client.post("/transactions/webhook", json=VALID)
+async def test_webhook_valid_payload_is_processed(client, buyer_id):
+    r = await client.post("/transactions/webhook", json={**VALID, "user_id": buyer_id})
     assert r.status_code == 200
     assert r.json()["status"] == "processed"
 
@@ -55,9 +66,9 @@ async def test_webhook_unknown_status_returns_422(client):
 
 
 @pytest.mark.asyncio
-async def test_webhook_signature_enforced_when_secret_configured(client, monkeypatch):
+async def test_webhook_signature_enforced_when_secret_configured(client, buyer_id, monkeypatch):
     monkeypatch.setattr(settings, "WEBHOOK_SIGNING_SECRET", "shh-secret")
-    body = json.dumps({**VALID, "event_id": "evt_w3"}).encode()
+    body = json.dumps({**VALID, "event_id": "evt_w3", "user_id": buyer_id}).encode()
     headers = {"content-type": "application/json"}
 
     # no signature header -> 401
