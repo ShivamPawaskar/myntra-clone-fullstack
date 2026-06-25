@@ -1,0 +1,60 @@
+# Render Blueprint — one-click deploy of the full backend stack.
+# Commit this file and use "New > Blueprint" in the Render dashboard, point
+# it at the repo, and Render provisions everything below.
+#
+# Topology: web API + background worker (sharing one Docker image), a
+# managed Postgres database, and a managed Redis (Key Value) instance.
+
+services:
+  - type: web
+    name: myntra-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: myntra-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: myntra-redis
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ENV
+        value: production
+    # The Dockerfile CMD already runs `alembic upgrade head` before starting
+    # uvicorn, so migrations apply automatically on every deploy.
+
+  - type: worker
+    name: myntra-worker
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    dockerCommand: rq worker notifications --url $REDIS_URL
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: myntra-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: myntra-redis
+          property: connectionString
+
+databases:
+  - name: myntra-db
+    plan: basic-256mb
+    postgresMajorVersion: "16"
+
+# Note: the APScheduler periodic sweeps (notifications retry, browsing-history
+# expiry, cart abandonment) run inside the web service process via the
+# FastAPI lifespan startup. For a multi-instance web deployment, move the
+# scheduler into its own single-instance worker to avoid duplicate sweeps
+# (see DESIGN_DECISIONS.md, "Scheduling at scale").

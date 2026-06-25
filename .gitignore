@@ -1,0 +1,40 @@
+# ---- Python (backend) ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.db
+*.sqlite3
+
+# ---- Node (web / mobile) ----
+node_modules/
+.next/
+out/
+dist/
+build/
+.expo/
+.expo-shared/
+*.tsbuildinfo
+
+# ---- Environment / secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- Editors / OS ----
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# ---- Tooling / local ----
+.claude/
+coverage/
+*.pem

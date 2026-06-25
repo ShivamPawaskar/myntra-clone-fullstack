@@ -1,0 +1,248 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --font-body: "Assistant", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --header-height: 110px;
+  /* Premium layered shadows + easing */
+  --shadow-sm: 0 1px 2px rgba(40, 44, 63, 0.06), 0 1px 3px rgba(40, 44, 63, 0.05);
+  --shadow-md: 0 4px 10px -2px rgba(40, 44, 63, 0.1), 0 2px 6px -2px rgba(40, 44, 63, 0.06);
+  --shadow-lg: 0 16px 32px -8px rgba(40, 44, 63, 0.16), 0 8px 16px -8px rgba(40, 44, 63, 0.1);
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-theme="light"] {
+  --color-bg-app: #f5f5f6;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-raised: #ffffff;
+  --color-bg-muted: #f0f0f1;
+  --color-text-primary: #282c3f;
+  --color-text-secondary: #535766;
+  --color-text-muted: #94969f;
+  --color-text-on-accent: #ffffff;
+  --color-accent-default: #ff3f6c;
+  --color-accent-hover: #e0355d;
+  --color-accent-subtle: #fff0f3;
+  --color-border-default: #eaeaec;
+  --color-border-strong: #d4d5d9;
+  --color-success: #03a685;
+  --color-danger: #ff3f6c;
+  --color-warning: #ff9f00;
+  --color-shadow-color: rgba(40, 44, 63, 0.1);
+  --color-overlay: rgba(40, 44, 63, 0.5);
+}
+
+[data-theme="dark"] {
+  /* Clean neutral dark (no muddy navy) — soft charcoal surfaces, high contrast */
+  --color-bg-app: #0e0e10;
+  --color-bg-surface: #1a1a1d;
+  --color-bg-surface-raised: #232327;
+  --color-bg-muted: #2a2a2e;
+  --color-text-primary: #f4f4f5;
+  --color-text-secondary: #c4c4c8;
+  --color-text-muted: #8a8a90;
+  --color-text-on-accent: #ffffff;
+  --color-accent-default: #ff3f6c;
+  --color-accent-hover: #ff5c82;
+  --color-accent-subtle: rgba(255, 63, 108, 0.14);
+  --color-border-default: #2e2e33;
+  --color-border-strong: #3f3f46;
+  --color-success: #2ed3a7;
+  --color-danger: #ff5a5a;
+  --color-warning: #ffb020;
+  --color-shadow-color: rgba(0, 0, 0, 0.55);
+  --color-overlay: rgba(0, 0, 0, 0.7);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.55);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: var(--color-bg-app);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-muted);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* ============================================================
+   PREMIUM POLISH
+   ============================================================ */
+
+body {
+  letter-spacing: -0.01em;
+}
+
+/* Sharper, more refined headings */
+h1, h2, h3 {
+  letter-spacing: -0.02em;
+}
+
+/* Premium focus rings for accessibility + polish */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-accent-default);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Subtle image fade-in as they load */
+@keyframes imgReveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+img {
+  animation: imgReveal 0.4s ease;
+}
+
+/* Shimmer skeleton (premium loading) */
+@keyframes shimmer {
+  0% { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+
+/* ============================================================
+   RESPONSIVE — tablet & mobile
+   Components set inline styles; these class hooks override the
+   key layouts at small widths for a polished phone experience.
+   ============================================================ */
+
+/* Two-column layouts (product detail, cart) collapse to one */
+@media (max-width: 768px) {
+  .responsive-2col {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .hide-mobile {
+    display: none !important;
+  }
+  .hero-slide {
+    height: 200px !important;
+  }
+  .hero-title {
+    font-size: 26px !important;
+  }
+  .hero-subtitle {
+    font-size: 20px !important;
+  }
+  .hero-pad {
+    padding: 0 20px !important;
+  }
+  /* Tighter page padding on phones */
+  .page-pad {
+    padding: 16px !important;
+  }
+  /* Product grids: comfortable 2-up on phones */
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  /* Category tiles: 3-up on phones */
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+  /* Header: fit everything on a phone, no overflow */
+  .header-row {
+    padding: 0 12px !important;
+    gap: 10px !important;
+  }
+  .header-logo span {
+    font-size: 20px !important;
+  }
+  .header-icons {
+    gap: 16px !important;
+  }
+  /* Reduced header height (no category nav row) keeps sticky offsets tight */
+  :root {
+    --header-height: 64px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 20px !important; }
+  .hero-subtitle { font-size: 16px !important; }
+  .category-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html, body, * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

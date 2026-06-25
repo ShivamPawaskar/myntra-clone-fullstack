@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Myntra Clone",
+    "slug": "myntra-clone",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.myntraclone.app"
+    },
+    "android": {
+      "package": "com.myntraclone.app",
+      "useNextNotificationsApi": true
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ff3f6c"
+        }
+      ]
+    ],
+    "extra": {
+      "apiUrl": "http://10.213.200.150:8000"
+    }
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Setup (install deps + seed DB)",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File ./run.ps1 -SetupOnly",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Backend",
+      "type": "shell",
+      "command": ".venv/Scripts/Activate.ps1; uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+      "options": {
+        "cwd": "${workspaceFolder}/backend",
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "myntra"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Started reloader process",
+          "endsPattern": "Application startup complete"
+        }
+      }
+    },
+    {
+      "label": "Start Worker",
+      "type": "shell",
+      "command": ".venv/Scripts/rq.exe worker notifications",
+      "options": {
+        "cwd": "${workspaceFolder}/backend",
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "myntra"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Worker|Subscribing",
+          "endsPattern": "Listening on"
+        }
+      }
+    },
+    {
+      "label": "Start Web",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/web"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "myntra"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "starting|compiling",
+          "endsPattern": "ready|compiled"
+        }
+      }
+    },
+    {
+      "label": "Start Mobile",
+      "type": "shell",
+      "command": "npx expo start",
+      "options": {
+        "cwd": "${workspaceFolder}/mobile"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "myntra"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Starting",
+          "endsPattern": "Expo DevTools"
+        }
+      }
+    },
+    {
+      "label": "Start All",
+      "dependsOn": ["Start Backend", "Start Worker", "Start Web", "Start Mobile"],
+      "dependsOrder": "parallel",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

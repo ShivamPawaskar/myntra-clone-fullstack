@@ -1,0 +1,37 @@
+# Runtime dependencies for the shared backend API.
+#
+# Pins are verified to install with prebuilt wheels on Python 3.12-3.14
+# (the project's interpreter). Install dev/test tooling separately via
+#   pip install -r requirements-dev.txt
+# which pulls this file in transitively.
+
+# Web framework + server
+fastapi==0.137.2
+uvicorn[standard]==0.49.0
+
+# ORM + migrations + DB drivers
+sqlalchemy==2.0.51
+alembic==1.18.4
+asyncpg==0.31.0          # async PostgreSQL driver (production)
+aiosqlite==0.22.1        # async SQLite driver (development)
+greenlet==3.5.2          # required by SQLAlchemy's async engine
+
+# Validation / settings
+pydantic==2.13.4
+pydantic-settings==2.14.2
+email-validator==2.3.0
+
+# Auth
+python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1            # passlib 1.7.x is incompatible with bcrypt>=4.1
+python-multipart==0.0.32
+
+# Background jobs / queue / scheduling
+redis==8.0.0
+rq==2.9.1
+APScheduler==3.11.2
+
+# HTTP client (Expo push delivery) + PDF receipts
+httpx==0.28.1
+reportlab==5.0.0

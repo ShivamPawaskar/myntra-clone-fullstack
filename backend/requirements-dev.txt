@@ -1,0 +1,7 @@
+# Development / test dependencies. Includes everything in requirements.txt
+# plus the test toolchain. Use this for local development and CI:
+#   pip install -r requirements-dev.txt
+-r requirements.txt
+
+pytest==9.1.1
+pytest-asyncio==1.4.0
