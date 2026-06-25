@@ -1,9 +1,19 @@
-# Render Blueprint — one-click deploy of the full backend stack.
+# Render Blueprint — one-click deploy of the backend stack, on FREE plans.
 # Commit this file and use "New > Blueprint" in the Render dashboard, point
-# it at the repo, and Render provisions everything below.
+# it at the repo, and Render provisions everything below at $0.
 #
-# Topology: web API + background worker (sharing one Docker image), a
-# managed Postgres database, and a managed Redis (Key Value) instance.
+# Topology: web API (Docker) + managed PostgreSQL + managed Redis (Key Value).
+#
+# The background RQ worker (push-notification delivery) is intentionally NOT
+# included because Render has no free tier for background workers. Everything
+# else — products, search, filters, cart, checkout, orders, reviews,
+# recommendations — works without it. To enable notification delivery later,
+# add a `type: worker` service running:  rq worker notifications --url $REDIS_URL
+#
+# Free-tier caveats to know:
+#   - the web service sleeps after ~15 min idle (first request then ~50s cold start)
+#   - Render's free PostgreSQL is removed after ~30 days; for a longer-lived
+#     demo, point DATABASE_URL at a free Neon database instead.
 
 services:
   - type: web
@@ -11,7 +21,7 @@ services:
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    plan: starter
+    plan: free
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
@@ -29,30 +39,11 @@ services:
         generateValue: true
       - key: ENV
         value: production
-    # The Dockerfile CMD already runs `alembic upgrade head` before starting
-    # uvicorn, so migrations apply automatically on every deploy.
+    # The Dockerfile CMD runs `alembic upgrade head` before starting uvicorn,
+    # so migrations apply automatically on every deploy.
 
-  - type: worker
-    name: myntra-worker
-    runtime: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
-    plan: starter
-    dockerCommand: rq worker notifications --url $REDIS_URL
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: myntra-db
-          property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: keyvalue
-          name: myntra-redis
-          property: connectionString
-
-  # Managed Redis (Key Value) — used for the notification queue (RQ) and the
-  # per-user rate limiter. This was referenced above but previously not
-  # defined, which made the blueprint fail to apply.
+  # Managed Redis (Key Value) — used for the per-user rate limiter and the
+  # (currently unprocessed) notification queue.
   - type: keyvalue
     name: myntra-redis
     plan: free
@@ -60,11 +51,5 @@ services:
 
 databases:
   - name: myntra-db
-    plan: basic-256mb
+    plan: free
     postgresMajorVersion: "16"
-
-# Note: the APScheduler periodic sweeps (notifications retry, browsing-history
-# expiry, cart abandonment) run inside the web service process via the
-# FastAPI lifespan startup. For a multi-instance web deployment, move the
-# scheduler into its own single-instance worker to avoid duplicate sweeps
-# (see DESIGN_DECISIONS.md, "Scheduling at scale").
