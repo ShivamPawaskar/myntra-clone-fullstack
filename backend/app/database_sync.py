@@ -10,6 +10,9 @@ from app.config import settings
 
 
 def _sync_url(url: str) -> str:
+    # Managed hosts give `postgres://`; SQLAlchemy 2.0 needs `postgresql://`.
+    if url.startswith("postgres://"):
+        url = "postgresql://" + url[len("postgres://"):]
     return (
         url.replace("postgresql+asyncpg", "postgresql+psycopg2")
         .replace("sqlite+aiosqlite", "sqlite")

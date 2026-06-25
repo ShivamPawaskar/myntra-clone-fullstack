@@ -25,6 +25,8 @@ services:
           property: connectionString
       - key: JWT_SECRET
         generateValue: true
+      - key: WEBHOOK_SIGNING_SECRET
+        generateValue: true
       - key: ENV
         value: production
     # The Dockerfile CMD already runs `alembic upgrade head` before starting
@@ -47,6 +49,14 @@ services:
           type: keyvalue
           name: myntra-redis
           property: connectionString
+
+  # Managed Redis (Key Value) — used for the notification queue (RQ) and the
+  # per-user rate limiter. This was referenced above but previously not
+  # defined, which made the blueprint fail to apply.
+  - type: keyvalue
+    name: myntra-redis
+    plan: free
+    ipAllowList: []   # empty = internal-only (services connect via the private URL)
 
 databases:
   - name: myntra-db

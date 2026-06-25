@@ -13,4 +13,5 @@ COPY . .
 
 # The API process. The worker + scheduler run as separate commands
 # (see docker-compose.yml) sharing this same image.
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+# Bind the platform-provided $PORT (Render/Fly set this); default 8000 locally.
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

@@ -2,13 +2,27 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import DeclarativeBase
 from app.config import settings
 
+
+def _async_url(url: str) -> str:
+    """Normalize a DB URL for SQLAlchemy's ASYNC engine. Managed hosts (Render,
+    Heroku, etc.) hand out `postgres://` or `postgresql://`, but the async
+    engine needs the asyncpg driver explicitly."""
+    if url.startswith("postgres://"):
+        url = "postgresql://" + url[len("postgres://"):]
+    if url.startswith("postgresql://"):
+        url = "postgresql+asyncpg://" + url[len("postgresql://"):]
+    return url
+
+
+ASYNC_DATABASE_URL = _async_url(settings.DATABASE_URL)
+
 connect_args = {}
-if settings.DATABASE_URL.startswith("sqlite"):
+if ASYNC_DATABASE_URL.startswith("sqlite"):
     # SQLite needs this for use with FastAPI's async + multiple connections
     connect_args = {"check_same_thread": False}
 
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    ASYNC_DATABASE_URL,
     echo=False,
     connect_args=connect_args,
     pool_pre_ping=True,
