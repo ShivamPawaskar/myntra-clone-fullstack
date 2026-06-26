@@ -4,6 +4,6 @@
   "buildCommand": "next build",
   "installCommand": "npm install",
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://myntra-api.onrender.com"
+    "NEXT_PUBLIC_API_URL": "https://myntra-api-nkz6.onrender.com"
   }
 }
