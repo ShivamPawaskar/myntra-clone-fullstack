@@ -1,95 +1,215 @@
-# Myntra-Clone — Full-Stack E-Commerce Platform
+<div align="center">
 
-A production-shaped shopping platform with a **shared backend** serving both a
-**web** client (Next.js) and a **mobile** client (React Native / Expo). Built
-to satisfy six engineered requirements with real concurrency, idempotency,
-and scalability guarantees.
+# 🛍️ Myntra Clone — Full-Stack E-Commerce Platform
 
-> See **DESIGN_DECISIONS.docx** for the full technical justification of every
-> design choice (complexity analysis, concurrency model, idempotency strategy,
-> cold-start handling, trade-offs).
+### A production-grade shopping platform with a shared backend powering both **web** and **mobile** clients
 
-## The six features
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Visit_Store-ff3f6c?style=for-the-badge)](https://myntra-clone-fullstack-ivory.vercel.app)
+[![API Docs](https://img.shields.io/badge/⚙️_API-Swagger_Docs-009688?style=for-the-badge)](https://myntra-api-nkz6.onrender.com/docs)
+[![Backend Tests](https://github.com/ShivamPawaskar/myntra-clone-fullstack/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/ShivamPawaskar/myntra-clone-fullstack/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](./LICENSE)
 
-1. **Hybrid Recently Viewed** with cross-device sync, DB-enforced dedup, 20-item cap, and anonymous→logged-in merge.
-2. **Scalable theme / dark-mode architecture** — semantic design tokens, zero hardcoded colors, persistence (localStorage / AsyncStorage), no-flash load.
-3. **Event-driven push notifications** — Redis/RQ queue, Expo delivery, exponential-backoff retry, rate limiting, invalid-token cleanup, foreground/background/terminated handling.
-4. **Transaction history** — idempotent webhooks (DB-constraint backed), append-only audit log, server-side filter/sort/pagination, streaming CSV export, on-demand PDF receipts.
-5. **Concurrency-safe cart** with Save for Later — optimistic locking via version column, price/stock/discontinued checkout validation.
-6. **Scalable personalization engine** — single-query 4-signal recommender, no N+1, O(k log k) bounded cost, measured p95 ≈ 8ms, graceful cold start.
+<br/>
 
-## Repository layout
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-FF4438?style=for-the-badge&logo=redis&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white)
+<br/>
+![Next.js](https://img.shields.io/badge/Next.js_14-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+
+**[🌐 Live Store](https://myntra-clone-fullstack-ivory.vercel.app)** • **[⚙️ Live API](https://myntra-api-nkz6.onrender.com/docs)** • **[📄 Design Decisions](./DESIGN_DECISIONS.docx)**
+
+</div>
+
+---
+
+## ✨ Overview
+
+A **Myntra-style online shopping platform** engineered to production standards — real concurrency control, idempotency guarantees, and scalability built in from the ground up. A single **FastAPI** backend serves both a **Next.js** web storefront and a **React Native (Expo)** mobile app. The same code runs on **SQLite** in development and **PostgreSQL** in production, and the whole thing is continuously tested in CI and **deployed live** on Vercel + Render.
+
+> 🎓 Built as an internship project around **six engineered requirements**, then extended with a full checkout flow, reviews, coupons, order tracking, and faceted search.
+
+---
+
+## 🚀 Live Demo
+
+| Service | URL | Stack |
+| :------ | :-- | :---- |
+| 🛍️ **Storefront** | **[myntra-clone-fullstack-ivory.vercel.app](https://myntra-clone-fullstack-ivory.vercel.app)** | Next.js · Vercel |
+| ⚙️ **REST API** | **[myntra-api-nkz6.onrender.com](https://myntra-api-nkz6.onrender.com/health)** · [`/docs`](https://myntra-api-nkz6.onrender.com/docs) | FastAPI · Render |
+
+> ⏱️ **Heads-up:** the API runs on a free tier and *sleeps when idle* — the **first** load after a break can take ~30–50s to wake up, then it's fast. Try logging in with **`test@demo.com`** / **`secret123`**, or sign up fresh.
+
+<!-- 📸 Tip: drop screenshots into a /docs/screenshots folder and embed them here to make this section pop. -->
+
+---
+
+## 🎯 Core Features
+
+The six engineered modules, each solving a hard real-world problem:
+
+| # | Module | What makes it production-grade |
+| :- | :----- | :----------------------------- |
+| 1️⃣ | **Hybrid Recently-Viewed** | Local cache (localStorage / AsyncStorage) for instant reads **+** server sync. Duplicate-proof via a DB `UNIQUE(user, product)` constraint & race-safe upsert, capped at 20, with anonymous→login merge that preserves newest-first order. |
+| 2️⃣ | **Theme & Dark Mode** | Centralized **semantic design tokens** — zero hardcoded colors. Auto-detects OS appearance, manual toggle, persisted, no-flash on load, and new themes drop in without touching components. |
+| 3️⃣ | **Push Notifications** | Event-driven delivery via a **Redis + RQ** queue with **exponential-backoff retries**, per-user **rate limiting**, dead-token cleanup, and foreground/background/terminated handling on Expo. |
+| 4️⃣ | **Transaction History** | Server-side **filter / sort / pagination** for 10k+ rows, **idempotent webhooks** (DB constraint + HMAC), append-only **audit log**, **streaming CSV** export & on-demand **PDF receipts**. |
+| 5️⃣ | **Concurrency-Safe Cart** | **Optimistic locking** (version column) defeats lost updates from multiple devices. Clean active / *Save-for-Later* split, plus stock, price-change & discontinued validation at checkout. |
+| 6️⃣ | **Recommendation Engine** | "You May Also Like" from **4 weighted signals** (category, wishlist overlap, browsing, popularity fallback) in **one index-backed SQL query** — no N+1, bounded cost, graceful cold start. |
+
+### 🌟 Beyond the brief
+
+> Extra features added on top of the requirements:
+
+🛒 **Checkout + demo payment gateway** (Card / UPI / Net Banking / COD) &nbsp;•&nbsp; ⚡ **Buy Now** &nbsp;•&nbsp; ⭐ **Reviews & ratings** with *Verified Purchase* badges &nbsp;•&nbsp; 🏷️ **Coupons** &nbsp;•&nbsp; 📦 **Order-status tracking** timeline &nbsp;•&nbsp; 🔎 **Faceted filter sidebar** (categories, brands, colors, price slider) &nbsp;•&nbsp; 👤 **User profiles** &nbsp;•&nbsp; ❤️ **Wishlist**
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart LR
+    subgraph Clients
+        W["🌐 Next.js Web<br/>(Vercel)"]
+        M["📱 Expo Mobile"]
+    end
+
+    subgraph Backend["⚙️ FastAPI Backend (Render)"]
+        API["REST API + JWT Auth"]
+        SCH["APScheduler<br/>(scheduled sweeps)"]
+    end
+
+    W -->|HTTPS / JWT| API
+    M -->|HTTPS / JWT| API
+    API --> DB[("🐘 PostgreSQL")]
+    API --> R[("⚡ Redis")]
+    R --> WK["🔁 RQ Worker"]
+    WK -->|push| EXPO["Expo Push API"]
+    API -.-> SCH
+    SCH -.-> R
+```
+
+---
+
+## 🧰 Tech Stack
+
+<table>
+<tr><td><b>Backend</b></td><td>FastAPI · SQLAlchemy 2.0 (async) · Alembic · Pydantic · PostgreSQL / SQLite · Redis + RQ · APScheduler · JWT (python-jose) · ReportLab · Docker</td></tr>
+<tr><td><b>Web</b></td><td>Next.js 14 (App Router) · React · TypeScript</td></tr>
+<tr><td><b>Mobile</b></td><td>React Native · Expo</td></tr>
+<tr><td><b>Tooling / DevOps</b></td><td>pytest · GitHub Actions (CI) · Render · Vercel</td></tr>
+</table>
+
+---
+
+## 📂 Project Structure
 
 ```
 myntra-clone/
-  backend/    FastAPI + SQLAlchemy + Redis/RQ + Alembic  (the shared API)
-  web/        Next.js 14 web client
-  mobile/     React Native (Expo) mobile client
-  DESIGN_DECISIONS.docx   Technical justification document
+├── backend/                 # FastAPI + SQLAlchemy + Redis/RQ + Alembic — the shared API
+│   ├── app/
+│   │   ├── models/          # SQLAlchemy ORM models
+│   │   ├── routers/         # API endpoints
+│   │   ├── services/        # business logic (cart, checkout, recommender, …)
+│   │   ├── workers/         # RQ worker + APScheduler sweeps
+│   │   └── tests/           # 61 pytest tests
+│   └── render.yaml          # one-click Render deploy
+├── web/                     # Next.js 14 storefront
+├── mobile/                  # React Native (Expo) app
+├── .github/workflows/       # CI: SQLite + PostgreSQL test matrix
+├── run.sh / run.ps1         # one-command full-stack dev launcher
+└── DESIGN_DECISIONS.docx    # full technical justification
 ```
 
-## Run it locally
+---
 
-### Quick start (one command)
+## ⚡ Quick Start
 
-From the repo root, the run script sets up everything (venv, pip, npm, DB seed)
-and starts the full stack — backend API, RQ worker, web, and mobile:
+> **One command** sets up everything (venv, pip, npm, DB seed) and launches the full stack:
 
 ```bash
-./run.sh                 # macOS / Linux / Git Bash
-./run.sh --no-mobile     # skip a piece, e.g. Expo
-./run.sh --setup-only    # install + seed only
+./run.sh          # macOS / Linux / Git Bash
 ```
 ```powershell
-./run.ps1                # Windows PowerShell (each service opens in its own window)
-./run.ps1 -NoWorker      # e.g. skip the RQ worker if you have no Redis
+./run.ps1         # Windows PowerShell
 ```
 
-> The RQ worker and push notifications need Redis on `localhost:6379`; the
-> script warns (rather than fails) if it isn't running. Use `--no-worker` /
-> `-NoWorker` to run without it.
+Then open **http://localhost:3000** 🎉
 
-### Manual setup
+<details>
+<summary><b>🔧 Manual setup (per service)</b></summary>
 
-**1. Backend** (see backend/README.md for detail) — requires Python 3.12–3.14
+<br/>
+
+**Backend** — requires Python 3.12–3.14
 ```bash
 cd backend
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements-dev.txt   # runtime + test deps (use requirements.txt for runtime only)
-redis-server --daemonize yes
+pip install -r requirements-dev.txt
 cp .env.example .env
 python -m app.seed
-uvicorn app.main:app --reload     # http://localhost:8000
-rq worker notifications           # in a second terminal
+uvicorn app.main:app --reload                       # http://localhost:8000
 ```
 
-**2. Web**
+**Web**
 ```bash
 cd web
 npm install
-cp .env.example .env.local        # points at http://localhost:8000
-npm run dev                       # http://localhost:3000
+cp .env.example .env.local
+npm run dev                                          # http://localhost:3000
 ```
 
-**3. Mobile**
+**Mobile**
 ```bash
 cd mobile
 npm install
-npx expo start                    # scan QR with Expo Go, or run a simulator
+npx expo start                                       # scan the QR with Expo Go
+```
+</details>
+
+---
+
+## 🧪 Testing & CI
+
+![Tests](https://img.shields.io/badge/tests-61_passing-success?style=flat-square)
+![CI](https://img.shields.io/badge/CI-SQLite_+_PostgreSQL-blue?style=flat-square)
+
+```bash
+cd backend && pytest app/tests          # 61 unit + integration tests
 ```
 
-## Deploy
+Every push runs the suite in **GitHub Actions** against **both SQLite (Python 3.12 & 3.14) and a real PostgreSQL** service — so dev-vs-prod SQL divergences (timezone handling, dialect quirks, foreign-key enforcement) are caught automatically before they ship.
 
-- **Backend**: `backend/render.yaml` provisions API + worker + Postgres + Redis on Render (migrations auto-run on deploy).
-- **Web**: `web/vercel.json` deploys to Vercel.
-- **Mobile**: `mobile/eas.json` builds for iOS/Android via EAS.
+---
 
-The same backend code runs on SQLite (dev) and PostgreSQL (prod) with only
-`DATABASE_URL` changing.
+## ☁️ Deployment
 
-## Verification
+| Component | Platform | Config | CI/CD |
+| :-------- | :------- | :----- | :---- |
+| Backend (API + Postgres + Redis) | **Render** | [`render.yaml`](./render.yaml) | auto-deploys on push, migrations run automatically |
+| Web | **Vercel** | [`web/vercel.json`](./web/vercel.json) | auto-deploys on push |
+| Mobile | **EAS** | `mobile/eas.json` | builds for iOS / Android |
 
-- `cd backend && pytest app/tests` — 42 unit/integration tests covering all six features (optimistic locking + stock caps, idempotent webhooks + CSV/PDF export, recently-viewed merge, notification backoff/rate-limit/invalid-token cleanup, recommendation signals + cold-start + browsing-history cap/expiry).
-- `cd backend && python smoke_test.py` — end-to-end test against a running server.
-- **CI** (`.github/workflows/backend-tests.yml`) runs the suite on every push against both SQLite (Python 3.12 & 3.14) and a real PostgreSQL service, so dev/prod SQL divergences are caught automatically. To run the Postgres leg locally:
-  `TEST_DATABASE_URL=postgresql+asyncpg://user:pass@localhost/test pytest app/tests`
+The identical backend code runs on **SQLite (dev)** and **PostgreSQL (prod)** — only `DATABASE_URL` changes.
+
+---
+
+## 📜 License
+
+Released under the **[MIT License](./LICENSE)**.
+
+<div align="center">
+
+<br/>
+
+**⭐ If you find this project useful, consider giving it a star!**
+
+Built with ❤️ by **[Shivam Pawaskar](https://github.com/ShivamPawaskar)**
+
+</div>
