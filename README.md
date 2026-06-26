@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛍️ Myntra Clone — Full-Stack E-Commerce Platform
+<img src="./docs/banner.svg" alt="Myntra Clone — Full-Stack E-Commerce Platform" width="100%">
 
 ### A production-grade shopping platform with a shared backend powering both **web** and **mobile** clients
 
@@ -24,6 +24,10 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 **[🌐 Live Store](https://myntra-clone-fullstack-ivory.vercel.app)** • **[⚙️ Live API](https://myntra-api-nkz6.onrender.com/docs)** • **[📄 Design Decisions](./DESIGN_DECISIONS.docx)**
+
+<br/>
+
+`6 engineered features`&nbsp;&nbsp;•&nbsp;&nbsp;`61 passing tests`&nbsp;&nbsp;•&nbsp;&nbsp;`dual-DB CI (SQLite + PostgreSQL)`&nbsp;&nbsp;•&nbsp;&nbsp;`live on Vercel + Render`
 
 </div>
 

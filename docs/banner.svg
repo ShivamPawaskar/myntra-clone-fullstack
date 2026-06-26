@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="100%" role="img" aria-label="Myntra Clone — Full-Stack E-Commerce Platform">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff3f6c"/>
+      <stop offset="0.5" stop-color="#ff5b5e"/>
+      <stop offset="1" stop-color="#ff905a"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="340" rx="26" fill="url(#bg)"/>
+  <rect width="1200" height="180" rx="26" fill="url(#sheen)"/>
+  <circle cx="1075" cy="60" r="170" fill="#ffffff" opacity="0.06"/>
+  <circle cx="990" cy="300" r="120" fill="#ffffff" opacity="0.05"/>
+  <circle cx="1160" cy="250" r="70" fill="#ffffff" opacity="0.05"/>
+
+  <!-- shopping bag mark -->
+  <g transform="translate(78,104)" fill="none" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M18 36 L10 56 v66 a9 9 0 0 0 9 9 h92 a9 9 0 0 0 9 -9 V56 l-8 -20 z"/>
+    <line x1="10" y1="56" x2="128" y2="56"/>
+    <path d="M48 74 a21 21 0 0 0 42 0"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="240" y="158" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="bold" font-size="92" fill="#ffffff">myntra</text>
+  <text x="612" y="158" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-weight="300" font-size="60" fill="#ffffff" opacity="0.9">clone</text>
+
+  <!-- tagline -->
+  <text x="243" y="208" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-weight="600" font-size="27" letter-spacing="0.5" fill="#ffffff">Full-Stack E-Commerce Platform</text>
+
+  <!-- tech pills -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#ffffff">
+    <g>
+      <rect x="243" y="240" width="120" height="42" rx="21" fill="#ffffff" opacity="0.16"/>
+      <text x="303" y="267" text-anchor="middle">FastAPI</text>
+    </g>
+    <g>
+      <rect x="375" y="240" width="118" height="42" rx="21" fill="#ffffff" opacity="0.16"/>
+      <text x="434" y="267" text-anchor="middle">Next.js</text>
+    </g>
+    <g>
+      <rect x="505" y="240" width="160" height="42" rx="21" fill="#ffffff" opacity="0.16"/>
+      <text x="585" y="267" text-anchor="middle">PostgreSQL</text>
+    </g>
+    <g>
+      <rect x="677" y="240" width="100" height="42" rx="21" fill="#ffffff" opacity="0.16"/>
+      <text x="727" y="267" text-anchor="middle">Redis</text>
+    </g>
+    <g>
+      <rect x="789" y="240" width="178" height="42" rx="21" fill="#ffffff" opacity="0.16"/>
+      <text x="878" y="267" text-anchor="middle">React Native</text>
+    </g>
+  </g>
+</svg>
